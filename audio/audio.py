@@ -50,6 +50,7 @@ class audio_model:
         output_wav_file = os.path.dirname(mp4_filepath) + 'extracted_audio.wav'
         mp4_filename = os.path.basename(mp4_filepath)
 
+
         # Strip the audio from video and store as .wav file
         ffmpeg_extract_audio(mp4_filepath, output_wav_file)
 
@@ -60,7 +61,6 @@ class audio_model:
         # Walk through each sliced file and get the openSmile features from that file
 
         out_fn = os.path.join(opensmile, mp4_filename[-4] + '-openSMILE-features.arff')
-        csv_path =
 
         for root, dirs, files in os.walk(os.path.dirname(mp4_filepath) , topdown=False):
             for name in files:
@@ -73,6 +73,17 @@ class audio_model:
 
         # Convert .arff to .csv
         all_timepoints_feature_array = arffToNp.convert(out_fn)
+
+        # Remove the temp .wav files
+        audio_home_dir = os.path.dirname(mp4_filepath)
+        temp_audio_file_list = os.listdir(audio_home_dir)
+
+        for item in test:
+            if item.endswith(".wav"):
+                os.remove(os.path.join(audio_home_dir, item))
+
+        # Remove the temp .arff file
+        os.remove(out_fn)
 
 
         return all_timepoints_feature_array
