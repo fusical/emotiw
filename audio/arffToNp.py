@@ -15,14 +15,23 @@ def convert(input_path):
 
     # Main loop for reading and writing files
 
+    output_array = [[]]
+
     with open(input_path , "r") as inFile:
         content = inFile.readlines()
-        name,ext = os.path.splitext(input_path.name)
+        name,ext = os.path.splitext(input_path)
         new = toCsv(content)
         with open(name+".csv", "w") as outFile:
-            outFile.writelines(new)
 
-        return np.asarray(pd.read_csv(name+".csv"))
+            outFile.writelines(new)
+            outFile.close()
+            df = pd.read_csv(name+".csv")
+            df = df.drop(columns=['name', 'class'])
+            output_array = np.asarray(df , dtype=np.float32)
+
+        print("Finished converting!")
+
+        return output_array
 
 
 

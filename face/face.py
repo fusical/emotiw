@@ -8,7 +8,7 @@ def predict(mp4_filepath, best_model_filepath):
     Outputs:
     - A tuple with predictions for each class (positive, neutral, negative)
     """
-    
+
     model = fer_model()
     model.load_model(best_model_filepath)
     return model.predict(mp4_filepath)

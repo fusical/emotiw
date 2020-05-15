@@ -17,12 +17,13 @@ from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_audio
 import os
 import glob
 import time
+import importlib
 
 
 os.chdir('/content/gdrive/My Drive/cs231n/notebooks/audio-new')
 
-#from SliceAudio import slice_audio
 import arffToNp
+importlib.reload(arffToNp)
 import subprocess
 
 
@@ -92,21 +93,21 @@ class audio_model:
 
         # Walk through each sliced file and get the openSmile features from that file
 
-      
-        
+
+
 
         #aligned_files = glob.glob(audio_home_dir +"/*.wav")
         out_fn = os.path.join(audio_home_dir, 'val-output-windows-emotion-lib-1.arff')
-       
+
 
         !cd '$audio_home_dir'  ; zip -r to_zip.zip  to_zip
-    
-        !cd '$audio_home_dir' ; mv 'to_zip.zip' '/content/' 
 
-        !cd '$audio_home_dir' ; cd to_zip ; rm *.wav 
+        !cd '$audio_home_dir' ; mv 'to_zip.zip' '/content/'
+
+        !cd '$audio_home_dir' ; cd to_zip ; rm *.wav
         !cd '$audio_home_dir' ; rm -d to_zip
-     
-        !cd '/content/' ; unzip to_zip.zip 
+
+        !cd '/content/' ; unzip to_zip.zip
 
         os.chdir('/content/to_zip/')
         aligned_files = glob.glob('*.wav')
@@ -117,15 +118,17 @@ class audio_model:
           out_fn = os.path.join(audio_home_dir, 'val-output-windows-emotion-lib-1.arff')
           !cd 'opensmile-2.3.0' ; inst/bin/SMILExtract -C config/IS13_ComParE.conf -I '$in_fn' -O '$out_fn' -N $name
 
-       
-                   
+
+
         !cd to_zip ; rm *.wav
         !rm -d to_zip
         # Convert .arff to .csv
         all_timepoints_feature_array = arffToNp.convert(out_fn)
+        print(all_timepoints_feature_array[:, -1].shape)
+
 
         # Remove the temp .wav files
-        
+
 
         # Remove the temp .arff file
         os.remove(out_fn)
@@ -148,7 +151,6 @@ installOpenSMILE()
 !cd 'opensmile-2.3.0' ; inst/bin/SMILExtract -h
 
 audio_model_1 = audio_model()
-audio_model_1.preprocess(mp4_filepath='/content/gdrive/My Drive/cs231n/notebooks/audio-new/1_1.mp4')
+output_arr = audio_model_1.preprocess(mp4_filepath='/content/gdrive/My Drive/cs231n/notebooks/audio-new/1_1.mp4')
 
-! cd to_zip ; rm *.wav;
-! rm -d to_zip
+output_arr.shape
