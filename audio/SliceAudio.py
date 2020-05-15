@@ -1,5 +1,7 @@
 ###########################
+#Acknowledgemts to
 #dr.mark.schultz@gmail.com#
+# Minor bug fixes and modifications to this code have been made.
 #20160626####################
 ###########################
 import os

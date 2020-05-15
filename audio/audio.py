@@ -3,6 +3,7 @@ from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_audio
 import os
 from SliceAudio import slice_audio
 import arffToNp
+import subprocess
 
 # add option for soft vs hard
 def predict(mp4_filepath, best_model_filepath):
@@ -68,10 +69,13 @@ class audio_model:
 
 
                     #TO DO: Run bash in python
-                    os.system("cd 'opensmile-2.3.0' ; inst/bin/SMILExtract -C config/IS13_ComParE.conf -I \"$in_fn\" -O \"$out_fn\" -N $name")
+                    os.system("cd 'opensmile-2.3.0' ; inst/bin/SMILExtract -C config/IS13_ComParE.conf -I '$in_fn' -O '$out_fn' -N $name")
 
         # Convert .arff to .csv
         all_timepoints_feature_array = arffToNp.convert(out_fn)
 
 
         return all_timepoints_feature_array
+
+def installOpenSMILE:
+    subprocess.call(['./openSMILEShell.sh'])
