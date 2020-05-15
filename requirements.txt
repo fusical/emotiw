@@ -7,3 +7,6 @@ os
 audioread
 pandas
 subprocess
+glob2
+argparse
+audioread

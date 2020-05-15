@@ -12,25 +12,24 @@ drive.mount('/content/gdrive')
 
 !pip install pydub
 
+# Imports 
 from tensorflow.keras.models import load_model
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_audio
 import os
 import glob
 import time
 import importlib
+from sklearn.preprocessing import StandardScaler
 
 
-os.chdir('/content/gdrive/My Drive/cs231n/notebooks/audio-new')
+os.chdir('/content/gdrive/My Drive/Machine-Learning-Projects/cs231n/notebooks/audio-new')
 
+#from SliceAudio import slice_audio
 import arffToNp
 importlib.reload(arffToNp)
 import subprocess
 
-
-
-
-
-# add option for soft vs hard
+# TODO: add option for soft vs hard
 def predict(mp4_filepath, best_model_filepath):
     """
     Outputs:
@@ -68,77 +67,68 @@ class audio_model:
 
         """
         Outputs:
-        - A numpy array with dimensions (m,n). m is the units in time dependent on the audio splice rate.
-            n is the number of features from the openSMILE library.
+        - A numpy array with dimensions (m,n). 
+          - m is the units in time dependent on the audio splice rate.
+          - n is the number of features from the openSMILE library.
         """
-
 
 
         output_wav_file = mp4_filepath[-5] + 'extracted_audio.wav'
         mp4_filename = os.path.basename(mp4_filepath)
         audio_home_dir = os.path.dirname(mp4_filepath)
-
+        os.chdir(audio_home_dir)
 
         # Strip the audio from video and store as .wav file
         ffmpeg_extract_audio(mp4_filepath, output_wav_file)
         !cd '$audio_home_dir' ; mkdir to_zip
 
-
-
         # splice the audio files into 2 seconds with 100 ms sliding window.
         # 30 kHz sampling rate
         !cd '$audio_home_dir' ; ls; python SliceAudio.py -i *.wav -o wav -c 2  -b 2 -s 30000 -w 100 -l 2000
+      
+        # Zip and move files from drive to vm
+        !cd '$audio_home_dir'  ; zip -r -qq to_zip.zip  to_zip ; cd '$audio_home_dir' ; mv 'to_zip.zip' '/content/' 
+
+        # Remove the old zip folder in vm
+        !cd '$audio_home_dir' ; cd to_zip ; rm *.wav  ; cd - ; rm -d to_zip
+
+        # Inflate the zip folder in vm
+        !cd '/content/' ; unzip -qq to_zip.zip 
 
 
-
-        # Walk through each sliced file and get the openSmile features from that file
-
-
-
-
-        #aligned_files = glob.glob(audio_home_dir +"/*.wav")
-        out_fn = os.path.join(audio_home_dir, 'val-output-windows-emotion-lib-1.arff')
-
-
-        !cd '$audio_home_dir'  ; zip -r to_zip.zip  to_zip
-
-        !cd '$audio_home_dir' ; mv 'to_zip.zip' '/content/'
-
-        !cd '$audio_home_dir' ; cd to_zip ; rm *.wav
-        !cd '$audio_home_dir' ; rm -d to_zip
-
-        !cd '/content/' ; unzip to_zip.zip
-
+        # OpenSMILE feature extraction
+        out_fn = os.path.join(audio_home_dir, mp4_filename + 'openSmile-features.arff')
         os.chdir('/content/to_zip/')
         aligned_files = glob.glob('*.wav')
         os.chdir('/content/')
         for in_fn in aligned_files:
           in_fn = os.path.join('/content/to_zip/' , in_fn)
           name = os.path.basename(in_fn)
-          out_fn = os.path.join(audio_home_dir, 'val-output-windows-emotion-lib-1.arff')
           !cd 'opensmile-2.3.0' ; inst/bin/SMILExtract -C config/IS13_ComParE.conf -I '$in_fn' -O '$out_fn' -N $name
 
-
-
-        !cd to_zip ; rm *.wav
-        !rm -d to_zip
         # Convert .arff to .csv
         all_timepoints_feature_array = arffToNp.convert(out_fn)
-        print(all_timepoints_feature_array[:, -1].shape)
+        print("The shape of the feature matrix for one \n video is: " , all_timepoints_feature_array.shape)
 
-
-        # Remove the temp .wav files
-
-
-        # Remove the temp .arff file
+        # Clean up            
+        !cd to_zip ; rm *.wav ; cd - ; rm -d to_zip      
         os.remove(out_fn)
-
         !cd '$audio_home_dir' ; rm *.wav
+        !rm to_zip.zip
 
+
+        # Standardize
+        scaler = StandardScaler()
+        all_timepoints_feature_array = scaler.fit_transform(all_timepoints_feature_array)
 
         return all_timepoints_feature_array
 
 def installOpenSMILE():
+    """
+    You must upload your downloaded version of openSMILE from the site to 
+    cloud.
+
+    """
     os.chdir('/content/')
     !tar -zxvf 'opensmile-2.3.0.tar.gz'
     !sed -i '117s/(char)/(unsigned char)/g' opensmile-2.3.0/src/include/core/vectorTransform.hpp
@@ -151,6 +141,7 @@ installOpenSMILE()
 !cd 'opensmile-2.3.0' ; inst/bin/SMILExtract -h
 
 audio_model_1 = audio_model()
-output_arr = audio_model_1.preprocess(mp4_filepath='/content/gdrive/My Drive/cs231n/notebooks/audio-new/1_1.mp4')
+output_arr = audio_model_1.preprocess(mp4_filepath='/content/gdrive/My Drive/Machine-Learning-Projects/cs231n/notebooks/audio-new/1_1.mp4')
 
 output_arr.shape
+
