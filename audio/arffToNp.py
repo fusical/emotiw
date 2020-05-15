@@ -17,12 +17,12 @@ def convert(input_path):
 
     with open(input_path , "r") as inFile:
         content = inFile.readlines()
-        #name,ext = os.path.splitext(output_path.name)
+        name,ext = os.path.splitext(input_path.name)
         new = toCsv(content)
-        #with open(name+".csv", "w") as outFile:
-            #outFile.writelines(new)
+        with open(name+".csv", "w") as outFile:
+            outFile.writelines(new)
 
-        return np.asarray(pd.read_csv(new))
+        return np.asarray(pd.read_csv(name+".csv"))
 
 
 
