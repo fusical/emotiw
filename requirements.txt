@@ -3,10 +3,12 @@ opencv-python>=4.0
 pydub==0.24.0
 matplotlib
 moviepy
-os
 audioread
 pandas
-subprocess
 glob2
 argparse
 audioread
+numpy
+pydub 
+openl3
+SoundFile
