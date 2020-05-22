@@ -2,7 +2,7 @@ tensorflow>=2.0
 opencv-python>=4.0
 pydub==0.24.0
 matplotlib
-moviepy
+moviepy>=1.0.0
 audioread
 pandas
 glob2
@@ -11,3 +11,4 @@ audioread
 numpy
 openl3
 SoundFile
+imgaug<0.2.7,>=0.2.5
