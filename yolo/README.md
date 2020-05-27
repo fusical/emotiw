@@ -8,4 +8,4 @@ File Descriptions (mostly from following this [tutorial](https://machinelearning
     1. Note, I had to make one change related to this bug
         1. Replace `np.set_printoptions(threshold=np.nan)` with `np.set_printoptions(threshold=sys.maxsize)`
 3. metadata_all.json: Output of running YOLOv3 on training videos. Outputs, for each video, objects detected, confidence scores, and bounding box locations
-4. yolov3_object_detection.ipynb: Notebook going through example of running YOLOv3 on the images to obtain outputs. Produces metadata_all.json.
+4. yolov3_object_detection.ipynb: Notebook going through example of running YOLOv3 on the images to obtain outputs. Produces metadata_all.json. Note, to actually run the notebook will require going to colab on our google drive directory
