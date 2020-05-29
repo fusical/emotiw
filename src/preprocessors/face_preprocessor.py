@@ -85,9 +85,7 @@ class FacePreprocessor:
             video_num = 1
 
             for video_name in videos:
-                future = executor.submit(self.process_video, self.process_audio
-                m
-                tmp_output_folder, video_name, video_num, len(videos))
+                future = executor.submit(self.process_video, tmp_output_folder, video_name, video_num, len(videos))
                 futures.append(future)
                 video_num += 1
 
