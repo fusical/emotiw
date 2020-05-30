@@ -16,12 +16,8 @@ import subprocess
 
 """#### Navigate to the repo we downloaded
 We will run all our commands from this repo
-"""
 
-import os
-os.chdir('/content/cs231n-emotiw')
-
-"""#### Pose Pre-Requisites
+#### Pose Pre-Requisites
 Pose extraction uses the [CMU OpenPose library](https://github.com/CMU-Perceptual-Computing-Lab/openpose) to extract body keypoints. We have pre-compiled this library for use in Colab but some system files still need to be installed.
 """
 
@@ -86,7 +82,14 @@ audio_preprocessor = AudioPreprocessor(
     label_path = "Train_labels.txt"
 )
 
-preprocessors_list = [video_preprocessor, face_preprocessor, pose_preprocessor, audio_preprocessor] 
+audio_preprocessor_val = AudioPreprocessor(
+    output_folder="val-tiny-audio", 
+    output_file= "val-tiny-audio.zip" ,
+    video_folder= "val-tiny.zip",
+    label_path = "Val_labels.txt"
+)
+
+preprocessors_list = [video_preprocessor, face_preprocessor, pose_preprocessor, audio_preprocessor , audio_preprocessor_val] 
 
 for preprocessor in preprocessors_list:
     preprocessor.preprocess()
