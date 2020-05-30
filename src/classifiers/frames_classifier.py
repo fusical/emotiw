@@ -29,6 +29,12 @@ class FramesClassifier:
         self.batch_size = batch_size
         print(f"FramesClassifier created with frames_folder = {frames_folder} , is_test = {is_test} , model_location = {model_location}")
 
+        if "https://" in self.model_location or "http://" in self.model_location:
+            downloaded_model_path = tf.keras.utils.get_file("frame-classifier", self.model_location)
+            self.model = tf.keras.models.load_model(downloaded_model_path)
+        else:
+            self.model = tf.keras.models.load_model(self.model_location)
+
     def predict(self, layer=None):
         """
         Performs sentiment classification prediction on preprocessed frames files
@@ -42,14 +48,11 @@ class FramesClassifier:
         folder = unzip_folder(self.frames_folder, "frames_tmp")
         generator = FramesDataGenerator(folder, is_test=self.is_test, frames_to_use=self.frames_to_use, batch_size=self.batch_size)
 
-        if "https://" in self.model_location or "http://" in self.model_location:
-            downloaded_model_path = tf.keras.utils.get_file("frame-classifier", self.model_location)
-            model = tf.keras.models.load_model(downloaded_model_path)
-        else:
-            model = tf.keras.models.load_model(self.model_location)
         if layer is not None:
             print(f"Customizing model by returning layer {layer}")
-            model = tf.keras.models.Model(model.input, model.get_layer(layer).output)
+            model = tf.keras.models.Model(self.model.input, self.model.get_layer(layer).output)
+        else:
+            model = self.model
 
         # Determine the order of samples that the generator gave to the model
         samples = map(lambda x: x.split(".mp4")[0].split("frame_")[1], generator.video_names)
@@ -60,8 +63,7 @@ class FramesClassifier:
         """
         Summarizes the pre-trained model
         """
-        model = tf.keras.models.load_model(self.model_location)
-        model.summary()
+        self.model.summary()
 
     def evaluate(self):
         """
@@ -74,6 +76,4 @@ class FramesClassifier:
 
         folder = unzip_folder(self.frames_folder, "frames_tmp")
         generator = FramesDataGenerator(folder, is_test=self.is_test, frames_to_use=self.frames_to_use, batch_size=self.batch_size)
-        model = tf.keras.models.load_model(self.model_location)
-        return model.evaluate(generator)
-
+        return self.model.evaluate(generator)

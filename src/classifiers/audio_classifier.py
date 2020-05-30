@@ -39,6 +39,12 @@ class AudioClassifier:
         self.batch_size = batch_size
         print(f"AudioClassifier created with audio_folder = {audio_folder} , is_test = {is_test} , model_location = {model_location}")
 
+        if "https://" in self.model_location or "http://" in self.model_location:
+            downloaded_model_path = tf.keras.utils.get_file("audio-classifier", self.model_location)
+            self.model = tf.keras.models.load_model(downloaded_model_path)
+        else:
+            self.model = tf.keras.models.load_model(self.model_location)
+
     def predict(self, layer=None):
         """
         Performs sentiment classification prediction on preprocessed audio files
@@ -52,15 +58,12 @@ class AudioClassifier:
         folder = unzip_folder(self.audio_folder, "audio_tmp")
         X = np.load(os.path.join(folder, 'audio-pickle-all-X-openl3.pkl'), allow_pickle=True)
 
-        if "https://" in self.model_location or "http://" in self.model_location:
-            downloaded_model_path = tf.keras.utils.get_file("audio-classifier", self.model_location)
-            model = tf.keras.models.load_model(downloaded_model_path)
-        else:
-            model = tf.keras.models.load_model(self.model_location)
 
         if layer is not None:
             print(f"Customizing model by returning layer {layer}")
-            model = tf.keras.models.Model(model.input, model.get_layer(layer).output)
+            model = tf.keras.models.Model(self.model.input, self.model.get_layer(layer).output)
+        else:
+            model = self.model
 
         normalizer = Normalizer()
         for i in range(0, X.shape[0]):
@@ -76,8 +79,7 @@ class AudioClassifier:
         """
         Summarizes the pre-trained model
         """
-        model = tf.keras.models.load_model(self.model_location)
-        model.summary()
+        self.model.summary()
 
     def evaluate(self):
         """
@@ -91,9 +93,8 @@ class AudioClassifier:
         folder = unzip_folder(self.audio_folder, "audio_tmp")
         X = np.load(os.path.join(folder, 'audio-pickle-all-X-openl3.pkl'), allow_pickle=True)
         Y = np.load(os.path.join(folder, 'audio-pickle-all-Y-openl3.pkl'), allow_pickle=True)
-        model = tf.keras.models.load_model(self.model_location)
         normalizer = Normalizer()
         for i in range(0,X.shape[0]):
             X[i] = normalizer.fit_transform(X[i])
 
-        return model.evaluate(X , Y)
+        return self.model.evaluate(X , Y)
