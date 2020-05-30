@@ -7,7 +7,10 @@ audioread
 pandas
 glob2
 argparse
+audioread
 numpy
+openl3
+SoundFile
 imgaug<0.2.7,>=0.2.5
 face_recognition
 dlib
