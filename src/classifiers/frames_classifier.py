@@ -52,7 +52,7 @@ class FramesClassifier:
             model = tf.keras.models.Model(model.input, model.get_layer(layer).output)
 
         # Determine the order of samples that the generator gave to the model
-        samples = map(lambda x: x.split(".mp4")[0].split("frame_")[1], generator.video_names)
+        samples = map(lambda x: x.split(".mp4")[0].split("frame_")[1] + ".mp4", generator.video_names)
 
         return model.predict(generator), list(samples)
 

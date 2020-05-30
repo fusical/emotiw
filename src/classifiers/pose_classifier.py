@@ -38,7 +38,7 @@ class PoseClassifier:
         :return:
             - The model prediction result
             - The video file names for each of the rows returned in model.predict
-              (without the .mp4 suffix)
+              (including the .mp4 suffix)
         """
         folder = unzip_folder(self.pose_folder, "pose_tmp")
         generator = PoseDataGenerator(folder, is_test=self.is_test, frames_to_use=self.frames_to_use, batch_size=self.batch_size)
@@ -53,7 +53,7 @@ class PoseClassifier:
             model = tf.keras.models.Model(model.input, model.get_layer(layer).output)
 
         # Determine the order of samples that the generator gave to the model
-        samples = map(lambda x: x.split(".mp4")[0].split("frame_")[1], generator.video_names)
+        samples = map(lambda x: x.split(".mp4")[0].split("frame_")[1] + ".mp4", generator.video_names)
         return model.predict(generator), list(samples)
 
     def summary(self):
