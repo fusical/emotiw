@@ -110,5 +110,5 @@ class FramesDataGenerator(tf.keras.utils.Sequence):
         return X, tf.keras.utils.to_categorical(y, num_classes=len(self.classes))
 
     def on_epoch_end(self):
-        if self.is_test == False and self.shuffle == True:
+        if self.shuffle == True:
             np.random.shuffle(self.video_names)

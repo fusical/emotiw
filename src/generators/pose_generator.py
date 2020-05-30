@@ -20,7 +20,10 @@ class PoseDataGenerator(tf.keras.utils.Sequence):
         self.frames_to_use = frames_to_use
         self.batch_size = batch_size
         self.keyframe_dir = keyframe_dir
-        self.shuffle = shuffle
+        if is_test:
+            self.shuffle = False
+        else:
+            self.shuffle = shuffle
         self.is_test = is_test
         self.classes = self.find_classes()
         self.video_names, self.video_map, self.video_to_class, self.num_samples, self.min_frames = self.find_samples()
