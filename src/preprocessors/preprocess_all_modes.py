@@ -14,13 +14,6 @@ This notebook preprocesses input videos to extract faces, frames, poses, and aud
 
 import subprocess
 
-# Clone the code base
-subprocess.check_output("git clone 'https://github.com/kevincong95/cs231n-emotiw.git'" , shell=True)
-
-
-# Install required packages
-subprocess.check_output("pip install -r  '/content/cs231n-emotiw/requirements.txt'" , shell=True)
-
 """#### Navigate to the repo we downloaded
 We will run all our commands from this repo
 """
