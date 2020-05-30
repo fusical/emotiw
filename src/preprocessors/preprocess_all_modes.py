@@ -58,7 +58,7 @@ def preprocess(video_folder, local_base_path, label_file=None):
     )
 
     pose_preprocessor = PosePreprocessor(
-        video_frame_folder=f"{local_base_path}-frames",
+        video_frame_folder=f"{local_base_path}-pose",
         output_folder=f"{local_base_path}-pose",
         output_file=f"{local_base_path}-pose.zip",
         is_test=label_file is None
