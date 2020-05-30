@@ -37,7 +37,7 @@ class FramesClassifier:
         return:
             - The model prediction result
             - The video file names for each of the rows returned in model.predict
-              (without the .mp4 suffix)
+              (including the .mp4 suffix)
         """
         folder = unzip_folder(self.frames_folder, "frames_tmp")
         generator = FramesDataGenerator(folder, is_test=self.is_test, frames_to_use=self.frames_to_use, batch_size=self.batch_size)

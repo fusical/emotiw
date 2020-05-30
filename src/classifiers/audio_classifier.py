@@ -47,7 +47,7 @@ class AudioClassifier:
         return:
             - The model prediction result
             - The video file names for each of the rows returned in model.predict
-              (without the .mp4 suffix)
+              (including the .mp4 suffix)
         """
         folder = unzip_folder(self.audio_folder, "audio_tmp")
         X = np.load(os.path.join(folder, 'audio-pickle-all-X-openl3.pkl'), allow_pickle=True)
