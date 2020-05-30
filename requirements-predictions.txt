@@ -1,4 +1,4 @@
-tensorflow>2.2.0
+tensorflow
 opencv-python>=4.0
 pydub==0.24.0
 matplotlib
