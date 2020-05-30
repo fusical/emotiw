@@ -53,8 +53,10 @@ class AudioClassifier:
         X = np.load(os.path.join(folder, 'audio-pickle-all-X-openl3.pkl'), allow_pickle=True)
 
         if "https://" in self.model_location or "http://" in self.model_location:
+            print(self.model_location)
             downloaded_model_path = tf.keras.utils.get_file("audio-classifier", self.model_location)
             model = tf.keras.models.load_model(downloaded_model_path)
+            print(downloaded_model_path)
         else:
             model = tf.keras.models.load_model(self.model_location)
 
