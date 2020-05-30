@@ -1,13 +1,9 @@
-import zipfile
-import cv2
-from concurrent.futures import ThreadPoolExecutor
-from pathlib import Path
-import os
-from os.path import isfile, join
 import tensorflow as tf
-import tempfile
-import shutil
 from ..generators.pose_generator import PoseDataGenerator
+import tensorflow as tf
+
+from .utils import unzip_folder
+
 
 class PoseClassifier:
     """
@@ -35,7 +31,16 @@ class PoseClassifier:
         print(f"PoseClassifier created with pose_folder = {pose_folder} , is_test = {is_test} , model_location = {model_location}")
 
     def predict(self, layer=None):
-        folder = self.unzip_folder()
+        """
+        Performs sentiment classification prediction on preprocessed pose files
+        @param layer: If None, performs normal sentiment classification.
+                      If not None, returns the values from the intermediate layers.
+        :return:
+            - The model prediction result
+            - The video file names for each of the rows returned in model.predict
+              (without the .mp4 suffix)
+        """
+        folder = unzip_folder(self.pose_folder, "pose_tmp")
         generator = PoseDataGenerator(folder, is_test=self.is_test, frames_to_use=self.frames_to_use, batch_size=self.batch_size)
         if "https://" in self.model_location or "http://" in self.model_location:
             downloaded_model_path = tf.keras.utils.get_file("pose-classifier", self.model_location)
@@ -47,39 +52,28 @@ class PoseClassifier:
             print(f"Customizing model by returning layer {layer}")
             model = tf.keras.models.Model(model.input, model.get_layer(layer).output)
 
-        return model.predict(generator)
+        # Determine the order of samples that the generator gave to the model
+        samples = map(lambda x: x.split(".mp4")[0], generator.video_names)
+        return model.predict(generator), samples
 
     def summary(self):
+        """
+        Summarizes the pre-trained model
+        """
         model = tf.keras.models.load_model(self.model_location)
         model.summary()
 
     def evaluate(self):
+        """
+        Evaluates the pose files on the pre-trained model
+        return: The evaluation results
+        """
         if self.is_test:
             print("Evaluation cannot be done in test-mode")
             return
 
-        folder = self.unzip_folder()
+        folder = unzip_folder(self.pose_folder, "pose_tmp")
         generator = PoseDataGenerator(folder, is_test=self.is_test, frames_to_use=self.frames_to_use, batch_size=self.batch_size)
         model = tf.keras.models.load_model(self.model_location)
 
         return model.evaluate(generator)
-
-    def unzip_folder(self):
-        if self.pose_folder.endswith(".zip"):
-            # Unzips files to a temp directory
-            tmp_output_folder = "pose_tmp"
-            if os.path.exists(tmp_output_folder) and os.path.isdir(tmp_output_folder):
-                print("Removing existing dir...")
-                shutil.rmtree(tmp_output_folder)
-
-            print(f"Unzipping files to temp dir {tmp_output_folder}...")
-            Path(f"{tmp_output_folder}").mkdir(parents=True, exist_ok=True)
-            with zipfile.ZipFile(self.pose_folder, 'r') as zip_ref:
-                zip_ref.extractall(tmp_output_folder)
-            print("Finished unzipping files")
-        else:
-            tmp_output_folder = self.pose_folder
-            print("Skipping unzipping files as input is a folder")
-        return tmp_output_folder
-
-

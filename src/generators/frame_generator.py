@@ -18,7 +18,10 @@ class FramesDataGenerator(tf.keras.utils.Sequence):
         self.batch_size = batch_size
         self.is_test = is_test
         self.dir = dir
-        self.shuffle = shuffle
+        if is_test:
+            self.shuffle = False
+        else:
+            self.shuffle = shuffle
         self.classes = self.find_classes()
         self.video_names, self.video_map, self.video_to_class, self.num_samples, self.min_frames = self.find_samples()
         self.on_epoch_end()
@@ -107,5 +110,5 @@ class FramesDataGenerator(tf.keras.utils.Sequence):
         return X, tf.keras.utils.to_categorical(y, num_classes=len(self.classes))
 
     def on_epoch_end(self):
-        if self.shuffle == True:
+        if self.is_test == False and self.shuffle == True:
             np.random.shuffle(self.video_names)
