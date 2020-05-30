@@ -47,7 +47,7 @@ class AudioClassifier:
         return:
             - The model prediction result
             - The video file names for each of the rows returned in model.predict
-              (including the .mp4 suffix)
+              (without the .mp4 suffix)
         """
         folder = unzip_folder(self.audio_folder, "audio_tmp")
         X = np.load(os.path.join(folder, 'audio-pickle-all-X-openl3.pkl'), allow_pickle=True)
@@ -68,7 +68,7 @@ class AudioClassifier:
 
         # The original pre-processing created the X array using the sorted order of the video files
         audio_pickles = sorted(next(os.walk(os.path.join("train-tiny-audio", "audio-pickle")))[2])
-        samples = map(lambda x: x.split(".mp4")[0] + ".mp4", audio_pickles)
+        samples = map(lambda x: x.split(".mp4")[0], audio_pickles)
 
         return model.predict(X, batch_size=self.batch_size), list(samples)
 
