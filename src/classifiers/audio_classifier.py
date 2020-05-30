@@ -70,7 +70,7 @@ class AudioClassifier:
             X[i] = normalizer.fit_transform(X[i])
 
         # The original pre-processing created the X array using the sorted order of the video files
-        audio_pickles = sorted(next(os.walk(os.path.join("train-tiny-audio", "audio-pickle")))[2])
+        audio_pickles = sorted(next(os.walk(os.path.join(self.audio_folder, "audio-pickle")))[2])
         samples = map(lambda x: x.split(".mp4")[0], audio_pickles)
 
         return model.predict(X, batch_size=self.batch_size), list(samples)
