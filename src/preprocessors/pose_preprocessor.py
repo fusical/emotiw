@@ -51,7 +51,7 @@ class PosePreprocessor:
         Path(f"{self.output_folder}").mkdir(parents=True, exist_ok=True)
 
         if self.is_test:
-            print(f"Starting pose extraction for {tmp_output_folder}")
+            print(f"Starting test pose extraction for {tmp_output_folder}")
             p = subprocess.run(
                 ["build/examples/openpose/openpose.bin", "--image_dir", "../" + tmp_output_folder, "--write_json",
                  "../" + self.output_folder, "--display", "0", "--render_pose", "0"], cwd="openpose",
@@ -59,6 +59,7 @@ class PosePreprocessor:
             print(p.stdout)
             print(p.stderr)
         else:
+            print(f"Starting pose extraction for {tmp_output_folder}")
             # Subfolders represent the different categories
             # (we will mimic this for the final output)
             subfolders = next(os.walk(tmp_output_folder))[1]
