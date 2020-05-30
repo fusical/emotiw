@@ -37,7 +37,11 @@ class PoseClassifier:
     def predict(self, layer=None):
         folder = self.unzip_folder()
         generator = PoseDataGenerator(folder, is_test=self.is_test, frames_to_use=self.frames_to_use, batch_size=self.batch_size)
-        model = tf.keras.models.load_model(self.model_location)
+        if "https://" in self.model_location or "http://" in self.model_location:
+            downloaded_model_path = tf.keras.utils.get_file("pose-classifier", self.model_location)
+            model = tf.keras.models.load_model(downloaded_model_path)
+        else:
+            model = tf.keras.models.load_model(self.model_location)
 
         if layer is not None:
             print(f"Customizing model by returning layer {layer}")
