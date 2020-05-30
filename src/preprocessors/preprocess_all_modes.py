@@ -12,30 +12,6 @@ Original file is located at
 This notebook preprocesses input videos to extract faces, frames, poses, and audio before running pre-trained models for each modality to predict group sentiment (positive, negative, or neutral).
 """
 
-import subprocess
-
-"""#### Navigate to the repo we downloaded
-We will run all our commands from this repo
-
-#### Pose Pre-Requisites
-Pose extraction uses the [CMU OpenPose library](https://github.com/CMU-Perceptual-Computing-Lab/openpose) to extract body keypoints. We have pre-compiled this library for use in Colab but some system files still need to be installed.
-"""
-
-subprocess.check_output("apt-get -qq install -y libatlas-base-dev libprotobuf-dev libleveldb-dev libsnappy-dev libhdf5-serial-dev protobuf-compiler libgflags-dev libgoogle-glog-dev liblmdb-dev opencl-headers ocl-icd-opencl-dev libviennacl-dev" , shell=True)
-subprocess.check_output("wget https://storage.googleapis.com/cs231n-emotiw/openpose/openpose.tar.gz", shell=True)
-subprocess.check_output("tar -xzf openpose.tar.gz", shell=True)
-
-"""#### Retrieve the files
-
-The code block below demonstrates how to retrieve the files from GCS. However, feel free to skip this step if the files are already on the local disk or you have Google Drive mounted.
-"""
-
-subprocess.check_output("wget https://storage.googleapis.com/cs231n-emotiw/data/train-tiny.zip", shell=True)
-subprocess.check_output("wget https://storage.googleapis.com/cs231n-emotiw/data/val-tiny.zip" , shell=True)
-subprocess.check_output("wget https://storage.googleapis.com/cs231n-emotiw/data/test-tiny.zip" , shell=True)
-subprocess.check_output("wget https://storage.googleapis.com/cs231n-emotiw/data/Train_labels.txt" , shell=True)
-subprocess.check_output("wget https://storage.googleapis.com/cs231n-emotiw/data/Val_labels.txt" , shell=True)
-
 """#### Pre-Processing
 
 Here, we will instantiate each of the preprocessors and process all of the input video files.
@@ -56,40 +32,35 @@ from src.preprocessors.face_preprocessor import FacePreprocessor
 from src.preprocessors.pose_preprocessor import PosePreprocessor
 from src.preprocessors.audio_preprocessor import AudioPreprocessor
 
-video_preprocessor = VideoPreprocessor(
-    video_folder= "train-tiny.zip", 
-    label_file= "Train_labels.txt", 
-    output_folder="train-tiny-local", 
-    output_file= "train-tiny-local.zip"
-)
 
-face_preprocessor = FacePreprocessor(
-    video_folder="train-tiny.zip",
-    output_folder="train-tiny-faces", 
-    output_file="train-tiny-faces.zip"
-)
+def preprocess(video_folder="train-tiny.zip", label_file="Train_labels.txt", local_base_path="train-tiny"):
+    video_preprocessor = VideoPreprocessor(
+        video_folder=video_folder,
+        label_file=label_file,
+        output_folder=f"{local_base_path}-local",
+        output_file=f"{local_base_path}-local.zip"
+    )
 
-pose_preprocessor = PosePreprocessor(
-    video_frame_folder="val-tiny.zip",
-    output_folder="val-tiny-pose", 
-    output_file="val-tiny-pose.zip"
-)
+    face_preprocessor = FacePreprocessor(
+        video_folder=video_folder,
+        output_folder=f"{local_base_path}-faces",
+        output_file=f"{local_base_path}-faces.zip"
+    )
 
-audio_preprocessor = AudioPreprocessor(
-    output_folder="train-tiny-audio", 
-    output_file= "train-tiny-audio.zip" ,
-    video_folder= "train-tiny.zip",
-    label_path = "Train_labels.txt"
-)
+    pose_preprocessor = PosePreprocessor(
+        video_frame_folder=f"{local_base_path}-local",
+        output_folder=f"{local_base_path}-pose",
+        output_file=f"{local_base_path}-pose.zip"
+    )
 
-audio_preprocessor_val = AudioPreprocessor(
-    output_folder="val-tiny-audio", 
-    output_file= "val-tiny-audio.zip" ,
-    video_folder= "val-tiny.zip",
-    label_path = "Val_labels.txt"
-)
+    audio_preprocessor = AudioPreprocessor(
+        video_folder=video_folder,
+        label_path=label_file,
+        output_folder=f"{local_base_path}-audio",
+        output_file=f"{local_base_path}-audio.zip"
+    )
 
-preprocessors_list = [video_preprocessor, face_preprocessor, pose_preprocessor, audio_preprocessor , audio_preprocessor_val] 
+    preprocessors_list = [video_preprocessor, face_preprocessor, pose_preprocessor, audio_preprocessor , audio_preprocessor_val]
 
-for preprocessor in preprocessors_list:
-    preprocessor.preprocess()
+    for preprocessor in preprocessors_list:
+        preprocessor.preprocess()
