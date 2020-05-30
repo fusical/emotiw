@@ -21,3 +21,7 @@ def unzip_folder(folder, tmp_file_name):
         tmp_output_folder = folder
         print("Skipping unzipping files as input is a folder")
     return tmp_output_folder
+
+def get_num_samples(folder):
+    path, dirs, files = next(os.walk(folder))
+    return len(files)
