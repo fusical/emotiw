@@ -14,7 +14,7 @@ class FramesClassifier:
     Classifies sentiment based on frames extracted from video clips
     """
 
-    def __init__(self, frames_folder, model_location=None, is_test=None, is_zip=True, frames_to_use=12, batch_size=16):
+    def __init__(self, frames_folder, model_location=None, is_test=None, frames_to_use=12, batch_size=16):
         """
         @param frames_folder  The folder where the list of frames are stored. If
                               `is_zip` is set to True, this should be a single zip
@@ -24,17 +24,15 @@ class FramesClassifier:
         @param is_test        If set to True, we assume that `frames_folder` contains a flat
                               list of videos. If False, we assume that `frames_folder` first
                               contains subdirectories corresponding to category labels.
-        @param is_zip         If set to True, the `frames_folder` will be unzipped prior to accessing
         @param frames_to_use  The number of frames to use per video
         @param batch_size     The batch size used to feed into the model evaluation
         """
-        self.is_zip = is_zip
         self.frames_folder = frames_folder
         self.is_test = is_test
         self.model_location = model_location
         self.frames_to_use = frames_to_use
         self.batch_size = batch_size
-        print(f"FramesClassifier created with is_zip = {is_zip}, frames_folder = {frames_folder} , is_test = {is_test} , model_location = {model_location}")
+        print(f"FramesClassifier created with frames_folder = {frames_folder} , is_test = {is_test} , model_location = {model_location}")
 
     def predict(self, layer=None):
         folder = self.unzip_folder()
@@ -65,18 +63,18 @@ class FramesClassifier:
         return model.evaluate(generator)
 
     def unzip_folder(self):
-        if self.is_zip:
-              # Unzips files to a temp directory
-              tmp_output_folder = "frames_tmp"
-              if os.path.exists(tmp_output_folder) and os.path.isdir(tmp_output_folder):
-                  print("Removing existing dir...")
-                  shutil.rmtree(tmp_output_folder)
+        if self.frames_folder.endswith(".zip"):
+            # Unzips files to a temp directory
+            tmp_output_folder = "frames_tmp"
+            if os.path.exists(tmp_output_folder) and os.path.isdir(tmp_output_folder):
+                print("Removing existing dir...")
+                shutil.rmtree(tmp_output_folder)
 
-              print(f"Unzipping files to temp dir {tmp_output_folder}...")
-              Path(f"{tmp_output_folder}").mkdir(parents=True, exist_ok=True)
-              with zipfile.ZipFile(self.frames_folder, 'r') as zip_ref:
-                  zip_ref.extractall(tmp_output_folder)
-              print("Finished unzipping files")
+            print(f"Unzipping files to temp dir {tmp_output_folder}...")
+            Path(f"{tmp_output_folder}").mkdir(parents=True, exist_ok=True)
+            with zipfile.ZipFile(self.frames_folder, 'r') as zip_ref:
+                zip_ref.extractall(tmp_output_folder)
+            print("Finished unzipping files")
         else:
             tmp_output_folder = self.frames_folder
             print("Skipping unzipping files as input is a folder")
