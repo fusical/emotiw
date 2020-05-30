@@ -25,7 +25,7 @@ class AudioClassifier:
     Classifies sentiment based on audio extracted from videos
     """
 
-    def __init__(self, audio_folder , model_location=None, is_test=True, batch_size=32, label_path=None):
+    def __init__(self, audio_folder , model_location=None, is_test=True, batch_size=32):
         """
         @param audio_folder   The folder where the arrays of processed audio embeddings are stored. If
                               ends with .zip, this should be a single zip
@@ -40,7 +40,6 @@ class AudioClassifier:
         self.is_test = is_test
         self.model_location = model_location
         self.batch_size = batch_size
-        self.label_path = label_path
         print(f"AudioClassifier created with audio_folder = {audio_folder} , is_test = {is_test} , model_location = {model_location}")
 
     def predict(self, layer=None):
