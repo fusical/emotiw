@@ -70,7 +70,7 @@ class AudioClassifier:
         audio_pickles = sorted(next(os.walk(os.path.join("train-tiny-audio", "audio-pickle")))[2])
         samples = map(lambda x: x.split(".mp4")[0], audio_pickles)
 
-        return model.predict(X, batch_size=self.batch_size), samples
+        return model.predict(X, batch_size=self.batch_size), list(samples)
 
     def summary(self):
         """

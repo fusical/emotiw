@@ -54,7 +54,7 @@ class PoseClassifier:
 
         # Determine the order of samples that the generator gave to the model
         samples = map(lambda x: x.split(".mp4")[0], generator.video_names)
-        return model.predict(generator), samples
+        return model.predict(generator), list(samples)
 
     def summary(self):
         """
