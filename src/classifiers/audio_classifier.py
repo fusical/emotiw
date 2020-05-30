@@ -16,6 +16,7 @@ from os.path import isfile, join
 import tensorflow as tf
 import tempfile
 import shutil
+import numpy as np
 from sklearn.preprocessing import Normalizer
 
 
