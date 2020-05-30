@@ -4,7 +4,6 @@ import zipfile
 from pathlib import Path
 
 def unzip_folder(folder, tmp_file_name):
-    ""
     if folder.endswith(".zip"):
         # Unzips files to a temp directory
         tmp_output_folder = tmp_file_name

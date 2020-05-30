@@ -50,7 +50,9 @@ class AudioClassifier:
               (without the .mp4 suffix)
         """
         folder = unzip_folder(self.audio_folder, "audio_tmp")
+        print(folder)
         X = np.load(os.path.join(folder, 'audio-pickle-all-X-openl3.pkl'), allow_pickle=True)
+        print(X.shape)
 
         if "https://" in self.model_location or "http://" in self.model_location:
             print(self.model_location)
