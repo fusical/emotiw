@@ -32,7 +32,7 @@ class AudioClassifier:
                               file containing the embeddings. Paths can either be accessed by a local
                               folder or a GDrive mounted path.
         @param model_location The pre-trained model to perform predictions
-        @param is_test         If set to True, we assume that we are testing . If false, the evaluate 
+        @param is_test         If set to True, we assume that we are testing . If false, the evaluate
                               function will return a score.
         @param is_zip         If set to True, the `audio_folder` will be unzipped prior to accessing
         @param batch_size     The batch size used to feed into the model evaluation
@@ -48,13 +48,12 @@ class AudioClassifier:
     def predict(self):
         folder = self.unzip_folder()
         X = np.load(folder + 'audio-pickle-all-X-openl3.pkl' , allow_pickle=True)
-        Y = np.load(folder + 'audio-pickle-all-Y-openl3.pkl' , allow_pickle=True)
         model = tf.keras.models.load_model(self.model_location)
         normalizer = Normalizer()
         for i in range(0,X.shape[0]):
           X[i] = normalizer.fit_transform(X[i])
 
-        return model.predict(X , Y)
+        return model.predict(X, batch_size=self.batch_size)
 
     def evaluate(self):
         if self.is_test:
