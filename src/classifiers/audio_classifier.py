@@ -16,6 +16,7 @@ from os.path import isfile, join
 import tensorflow as tf
 import tempfile
 import shutil
+import numpy as np
 from sklearn.preprocessing import Normalizer
 
 
@@ -40,7 +41,6 @@ class AudioClassifier:
         self.audio_folder = audio_folder
         self.is_test = is_test
         self.model_location = model_location
-        self.frames_to_use = frames_to_use
         self.batch_size = batch_size
         self.label_path = label_path
         print(f"AudioClassifier created with is_zip = {is_zip}, audio_folder = {audio_folder} , is_test = {is_test} , model_location = {model_location}")
