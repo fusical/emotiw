@@ -27,18 +27,28 @@ In general, pre-processing will extract the following:
 - Audio waveform and audio features
 """
 
-from src.preprocessors.scene_preprocessor import VideoPreprocessor
+from src.preprocessors.scene_preprocessor import ScenePreprocessor
 from src.preprocessors.face_preprocessor import FacePreprocessor
 from src.preprocessors.pose_preprocessor import PosePreprocessor
 from src.preprocessors.audio_preprocessor import AudioPreprocessor
 
 
-def preprocess(video_folder="train-tiny.zip", label_file="Train_labels.txt", local_base_path="train-tiny"):
-    video_preprocessor = VideoPreprocessor(
+def preprocess(video_folder, local_base_path, label_file=None):
+    """
+    The preprocess the raw videos into different modalities
+
+    @param video_folder: The folder containing the video files.
+                         Example: "train-tiny.zip"
+    @param local_base_path: The folder prefix used in the local folders generated.
+                            Example: "train-tiny"
+    @param label_file: The file containing the videos.
+                       If set to None, assumed to be "test-mode"
+    """
+    video_preprocessor = ScenePreprocessor(
         video_folder=video_folder,
         label_file=label_file,
-        output_folder=f"{local_base_path}-local",
-        output_file=f"{local_base_path}-local.zip"
+        output_folder=f"{local_base_path}-frames",
+        output_file=f"{local_base_path}-frames.zip"
     )
 
     face_preprocessor = FacePreprocessor(
@@ -48,9 +58,10 @@ def preprocess(video_folder="train-tiny.zip", label_file="Train_labels.txt", loc
     )
 
     pose_preprocessor = PosePreprocessor(
-        video_frame_folder=f"{local_base_path}-local",
+        video_frame_folder=f"{local_base_path}-frames",
         output_folder=f"{local_base_path}-pose",
-        output_file=f"{local_base_path}-pose.zip"
+        output_file=f"{local_base_path}-pose.zip",
+        is_test=label_file is None
     )
 
     audio_preprocessor = AudioPreprocessor(
@@ -60,7 +71,13 @@ def preprocess(video_folder="train-tiny.zip", label_file="Train_labels.txt", loc
         output_file=f"{local_base_path}-audio.zip"
     )
 
-    preprocessors_list = [video_preprocessor, face_preprocessor, pose_preprocessor, audio_preprocessor , audio_preprocessor_val]
+    preprocessors_list = [video_preprocessor, face_preprocessor, pose_preprocessor, audio_preprocessor]
 
     for preprocessor in preprocessors_list:
         preprocessor.preprocess()
+
+    print("Done all pre-processing. Folders created: ")
+    print(f"   {local_base_path}-frames")
+    print(f"   {local_base_path}-faces")
+    print(f"   {local_base_path}-pose")
+    print(f"   {local_base_path}-audio")

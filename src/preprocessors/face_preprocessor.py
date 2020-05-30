@@ -31,28 +31,26 @@ class FacePreprocessor:
         ]
     """
 
-    def __init__(self, video_folder, output_folder, output_file=None, is_zip=True, height=320, width=480,
+    def __init__(self, video_folder, output_folder, output_file=None, height=320, width=480,
                  sample_every=10, max_workers=32):
         """
         @param video_folder          The folder where the list of videos frames are stored. If
-                                     `is_zip` is set to True, this should be a single zip
+                                     this ends with .zip, this should be a single zip
                                      file containing the video frames. Paths can either by a local
                                      folder or a GDrive mounted path.
         @param output_folder         The local output path where the preprocessed files will be stored for
                                      further preprocessing can be done
         @param output_file           If not none, the output_folder will be zipped up and stored at this location
-        @param is_zip                If set to True, the `video_folder` will be unzipped prior to accessing
         @param height         Height of the extracted video frames
         @param width          Width of the extracted video frames
         @param sample_every   The frames to skip.
         @param max_workers    The number of workers to use to parallelize work.
         """
-        self.is_zip = is_zip
         self.video_folder = video_folder
         self.output_folder = output_folder
         self.output_file = output_file
         print(
-            f"Video Preprocessor created with is_zip = {is_zip}, video_folder = {video_folder} , output_folder = {output_folder}, output_file = {output_file}")
+            f"Video Preprocessor created with video_folder = {video_folder} , output_folder = {output_folder}, output_file = {output_file}")
 
         self.height = height
         self.width = width
@@ -62,7 +60,7 @@ class FacePreprocessor:
 
     def preprocess(self):
         tmp_output_folder = ""
-        if self.is_zip:
+        if self.video_folder.endswith(".zip"):
             # Unzips files to a temp directory
             tmp_output_folder = self.output_folder.rstrip('/') + "_tmp"
             print(f"Unzipping files to temp dir {tmp_output_folder}...")
