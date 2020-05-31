@@ -46,7 +46,7 @@ class FramesClassifier:
               (without the .mp4 suffix)
         """
         folder = unzip_folder(self.frames_folder, "frames_tmp")
-        generator = FramesDataGenerator(folder, is_test=self.is_test, frames_to_use=self.frames_to_use, batch_size=self.batch_size)
+        generator = FramesDataGenerator(folder, is_test=self.is_test, frames_to_use=self.frames_to_use, batch_size=self.batch_size, shuffle=False)
 
         if layer is not None:
             print(f"Customizing model by returning layer {layer}")

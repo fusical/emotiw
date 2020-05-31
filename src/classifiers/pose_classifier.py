@@ -47,7 +47,7 @@ class PoseClassifier:
               (without the .mp4 suffix)
         """
         folder = unzip_folder(self.pose_folder, "pose_tmp")
-        generator = PoseDataGenerator(folder, is_test=self.is_test, frames_to_use=self.frames_to_use, batch_size=self.batch_size)
+        generator = PoseDataGenerator(folder, is_test=self.is_test, frames_to_use=self.frames_to_use, batch_size=self.batch_size, shuffle=False)
 
         if layer is not None:
             print(f"Customizing model by returning layer {layer}")
