@@ -62,6 +62,7 @@ class PoseDataGenerator(tf.keras.utils.Sequence):
                 cat_path = join(self.keyframe_dir, category_folder)
             frames = [f for f in listdir(cat_path) if isfile(join(cat_path, f))]
             for frame in frames:
+                # frame = frame_7_6.mp4_0_keypoints.json
                 frame_arr = frame.split(".mp4_")
                 vid_name = frame_arr[0]
                 if vid_name not in video_map:
@@ -71,9 +72,10 @@ class PoseDataGenerator(tf.keras.utils.Sequence):
 
             for k in video_map.keys():
                 # make sure the frames for each video are in sorted order
-                video_map[vid_name] = sorted(video_map[vid_name])
-                if min_frames == -1 or len(video_map[vid_name]) < min_frames:
-                    min_frames = len(video_map[vid_name])
+                video_map[k] = sorted(video_map[k],
+                                      key=lambda x: x.split(".mp4_")[0] + x.split(".mp4_")[1].split("_keypoints")[0].zfill(3))
+                if min_frames == -1 or len(video_map[k]) < min_frames:
+                    min_frames = len(video_map[k])
 
         return list(video_map.keys()), video_map, vid_to_cat, len(vid_to_cat), min_frames
 
