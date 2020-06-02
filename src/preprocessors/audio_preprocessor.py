@@ -103,6 +103,8 @@ class AudioPreprocessor:
             X_arr, ts_list = openl3.get_audio_embedding(audio_reads, sr, batch_size=15, hop_size=self.hop_size)
             X_norm = X_arr
 
+
+
          
             X = tf.keras.preprocessing.sequence.pad_sequences(X_arr, maxlen=maxlen)
             X = np.asarray(X, dtype='float32')
@@ -120,7 +122,7 @@ class AudioPreprocessor:
         for f in video_files:
             file_name = os.path.basename(f)
             with open(f"{self.output_folder}/audio-pickle/{file_name}-openl3.pkl", "wb") as f_out:
-                pickle.dump(all_x[i], f_out)
+                pickle.dump(all_x_norm[i], f_out)
 
         if self.label_path is not None:
             with open(f"{self.output_folder}/audio-pickle-all-X-openl3.pkl", "wb") as f_out:
