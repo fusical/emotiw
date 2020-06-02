@@ -101,7 +101,7 @@ class AudioPreprocessor:
                 print(f"Reading file {output_wav_file} ...")
 
             X_arr, ts_list = openl3.get_audio_embedding(audio_reads, sr, batch_size=15, hop_size=self.hop_size)
-            X_norm = X_arr
+
 
 
 
@@ -112,12 +112,16 @@ class AudioPreprocessor:
             if i == 0:
                 all_x = X
                 all_x = np.asarray(all_x, dtype='float32')
-                all_x = np.concatenate((all_x, X), axis=0)
+            else: 
+                all_x = np.concatenate((all_x ,  X ), axis=0)
 
+ 
             print(all_x.shape)
-            all_x_norm = all_x 
-            for i in range(0 , len(all_x_norm)):
-              all_x_norm[i] = normalizer.fit_transform(all_x[i])
+
+        all_x_norm = all_x 
+
+        for i in range(0 , len(all_x_norm)):      
+          all_x_norm[i] = normalizer.fit_transform(all_x_norm[i])
 
         for f in video_files:
             file_name = os.path.basename(f)
