@@ -1,11 +1,7 @@
 import numpy as np
-import random
-import cv2
 from os import listdir
 from os.path import isfile, join
-import os
 import json
-import matplotlib.pyplot as plt
 import tensorflow as tf
 
 
@@ -144,7 +140,7 @@ class PoseDataGenerator(tf.keras.utils.Sequence):
         """
         Denotes the number of batches per epoch
         """
-        return int(np.floor(self.num_samples / self.batch_size))
+        return int(np.ceil(self.num_samples / self.batch_size))
 
     def __getitem__(self, index):
         """
@@ -201,5 +197,3 @@ class PoseDataGenerator(tf.keras.utils.Sequence):
     def on_epoch_end(self):
         if self.shuffle == True:
             np.random.shuffle(self.video_names)
-
-
