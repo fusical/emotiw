@@ -11,6 +11,7 @@ from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_audio
 import numpy as np
 import openl3
 import soundfile as sf
+from sklearn.preprocessing import Normalizer
 
 
 class AudioPreprocessor:
@@ -51,7 +52,7 @@ class AudioPreprocessor:
         Optionally, it will output the entire matched X and Y numpy pickle objects if label path is provided
         -
         """
-
+        normalizer = Normalizer()
         tmp_output_folder = ""
         if self.video_folder.endswith(".zip"):
             # Unzips files to a temp directory
@@ -101,25 +102,35 @@ class AudioPreprocessor:
 
             X_arr, ts_list = openl3.get_audio_embedding(audio_reads, sr, batch_size=15, hop_size=self.hop_size)
 
+
+
+
+         
             X = tf.keras.preprocessing.sequence.pad_sequences(X_arr, maxlen=maxlen)
             X = np.asarray(X, dtype='float32')
 
             if i == 0:
                 all_x = X
                 all_x = np.asarray(all_x, dtype='float32')
-            else:
-                all_x = np.concatenate((all_x, X), axis=0)
+            else: 
+                all_x = np.concatenate((all_x ,  X ), axis=0)
 
+ 
             print(all_x.shape)
+
+        all_x_norm = all_x 
+
+        for i in range(0 , len(all_x_norm)):      
+          all_x_norm[i] = normalizer.fit_transform(all_x_norm[i])
 
         for f in video_files:
             file_name = os.path.basename(f)
             with open(f"{self.output_folder}/audio-pickle/{file_name}-openl3.pkl", "wb") as f_out:
-                pickle.dump(all_x[i], f_out)
+                pickle.dump(all_x_norm[i], f_out)
 
         if self.label_path is not None:
             with open(f"{self.output_folder}/audio-pickle-all-X-openl3.pkl", "wb") as f_out:
-                pickle.dump(all_x, f_out)
+                pickle.dump(all_x_norm, f_out)
 
             targets = np.asarray(targets)
             with open(f"{self.output_folder}/audio-pickle-all-Y-openl3.pkl", "wb") as f_out:

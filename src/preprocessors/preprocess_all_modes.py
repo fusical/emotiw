@@ -29,6 +29,7 @@ In general, pre-processing will extract the following:
 
 from src.preprocessors.scene_preprocessor import ScenePreprocessor
 from src.preprocessors.face_preprocessor import FacePreprocessor
+from src.preprocessors.fer_preprocessor import FerPreprocessor
 from src.preprocessors.pose_preprocessor import PosePreprocessor
 from src.preprocessors.audio_preprocessor import AudioPreprocessor
 
@@ -57,6 +58,13 @@ def preprocess(video_folder, local_base_path, label_file=None):
         output_file=f"{local_base_path}-faces.zip"
     )
 
+    fer_preprocessor = FerPreprocessor(
+        faces_folder=f"{local_base_path}-faces",
+        output_folder=f"{local_base_path}-fer",
+        output_file=f"{local_base_path}-fer.zip",
+        model_path="fer2013_mini_XCEPTION.119-0.65.hdf5"
+    )
+
     pose_preprocessor = PosePreprocessor(
         video_frame_folder=f"{local_base_path}-frames",
         output_folder=f"{local_base_path}-pose",
@@ -71,6 +79,7 @@ def preprocess(video_folder, local_base_path, label_file=None):
         output_file=f"{local_base_path}-audio.zip"
     )
 
+    #preprocessors_list = [fer_preprocessor]
     preprocessors_list = [video_preprocessor, face_preprocessor, pose_preprocessor, audio_preprocessor]
 
     for preprocessor in preprocessors_list:
@@ -79,5 +88,6 @@ def preprocess(video_folder, local_base_path, label_file=None):
     print("Done all pre-processing. Folders created: ")
     print(f"   {local_base_path}-frames")
     print(f"   {local_base_path}-faces")
+    print(f"   {local_base_path}-fer")
     print(f"   {local_base_path}-pose")
     print(f"   {local_base_path}-audio")
