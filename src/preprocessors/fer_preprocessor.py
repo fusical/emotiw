@@ -14,9 +14,10 @@ class FerPreprocessor:
     Run FER on all faces.
     """
     def __init__(self, faces_folder, output_folder, model_path, output_file=None,
-                 max_workers=32):
+                 max_frames=12, max_workers=32):
 
         self.faces_folder = faces_folder
+        self.max_frames = max_frames
         self.output_folder = output_folder
         self.output_file = output_file
         self.max_workers = max_workers
@@ -35,31 +36,28 @@ class FerPreprocessor:
                 zip_ref.extractall(tmp_input_folder)
             print("Finished unzipping files")
         else:
-            tmp_input_folder = path.join(self.faces_folder, "faces-pickle")
+            tmp_input_folder = join(self.faces_folder, "faces-pickle")
             print("Skipping unzipping files as input is a folder")
 
-        Path(f"{self.output_folder}/fer-pickle/").mkdir(parents=True, exist_ok=True)
         fer_model = load_model(self.model_path)
 
-        videos = next(os.walk(tmp_input_folder))[2]
-        for i in range(len(videos)):
-            self.process_video(fer_model, tmp_input_folder, \
-                               videos[i], i+1, len(videos))
-
         # Process each face
-        # futures = []
-        # with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
-        #     videos = next(os.walk(tmp_input_folder))[2]
-        #     print(f"Found {len(videos)} videos")
-        #     video_num = 1
-
-        #     for video_name in videos:
-        #         future = executor.submit(self.process_video, fer_model, tmp_input_folder, \
-        #                                 video_name, video_num, len(videos))
-        #         futures.append(future)
-        #         video_num += 1
+        videos = next(os.walk(tmp_input_folder))[2]
+        print(f"Found {len(videos)} videos")
+        futures = []
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+            for i in range(len(videos)):
+                future = executor.submit(self.process_video, fer_model, tmp_input_folder, \
+                                         videos[i], i, len(videos))
+                futures.append(future)
 
         print("***** Submitted all tasks *****")
+        X_all = np.empty((len(videos),self.max_frames,22))
+        for future in futures:
+            X_all[i] = future.result()
+        
+        Path(f"{self.output_folder}/").mkdir(parents=True, exist_ok=True)
+        np.save(f"{self.output_folder}/faces-fer.npy", X_all)
         print("***** Completed *****")
 
         if self.output_file is not None:
@@ -81,19 +79,18 @@ class FerPreprocessor:
     def process_video(self, fer_model, tmp_input_folder, pkl_name, video_num, \
                       total_videos, extract=False):
         print(f"Processing video {video_num}/{total_videos} with name {pkl_name}")
-        max_frames = 12
         
         if extract:
             fer_model = Model(inputs=fer_model.input, outputs=fer_model.layers[-3].output)
             _, H, W, C = fer_model.output_shape
-            X_train = np.empty((num_videos, max_frames, H*W*C*3 + 1))
+            X = np.empty((num_videos, max_frames, H*W*C*3 + 1))
         else:
-            X_train = np.empty((max_frames, 22))
+            X = np.empty((self.max_frames, 22))
 
-        pkl_path = path.join(tmp_input_folder, pkl_name)
+        pkl_path = join(tmp_input_folder, pkl_name)
         with open(pkl_path, "rb") as f_in:
           frames = pickle.load(f_in)
-          for frame_i in range(min(len(frames), max_frames)):
+          for frame_i in range(min(len(frames), self.max_frames)):
               faces = frames[frame_i]
               if len(faces) != 0:
                   fer_scores = self.run_fer(faces, fer_model, extract) # (N,7)
@@ -101,10 +98,10 @@ class FerPreprocessor:
                   min_face_scores = np.amin(fer_scores, axis=0).flatten() # (1,7)
                   mean_face_scores = np.mean(fer_scores, axis=0).flatten() # (1,7)
                   num_faces = np.array([len(faces)])
-                  X_train[frame_i, :] = np.concatenate((max_face_scores, min_face_scores, mean_face_scores, num_faces))
+                  X[frame_i, :] = np.concatenate((max_face_scores, min_face_scores, \
+                                                  mean_face_scores, num_faces))
 
-        with open(f"{self.output_folder}/fer-pickle/{pkl_name}", "wb") as f_out:
-            pickle.dump(X_train, f_out)
+        return X
   
     def run_fer(self, faces, fer_model, extract=False):
       N = len(faces)
