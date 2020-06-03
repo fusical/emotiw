@@ -3,7 +3,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import cv2
 import os
-from os import path
+from os.path import isfile, join
 import pickle
 from tensorflow.keras import Model
 from tensorflow.keras.models import load_model
@@ -40,13 +40,11 @@ class FerPreprocessor:
 
         Path(f"{self.output_folder}/fer-pickle/").mkdir(parents=True, exist_ok=True)
         fer_model = load_model(self.model_path)
-        print(fer_model.layers)
 
         videos = next(os.walk(tmp_input_folder))[2]
         for i in range(len(videos)):
-            video_name = videos[i]
             self.process_video(fer_model, tmp_input_folder, \
-                               video_name, i+1, len(videos))
+                               videos[i], i+1, len(videos))
 
         # Process each face
         # futures = []
@@ -105,7 +103,7 @@ class FerPreprocessor:
                   num_faces = np.array([len(faces)])
                   X_train[frame_i, :] = np.concatenate((max_face_scores, min_face_scores, mean_face_scores, num_faces))
 
-        with open(f"{self.output_folder}/fer-pickle/{pkl_name}.pkl", "wb") as f_out:
+        with open(f"{self.output_folder}/fer-pickle/{pkl_name}", "wb") as f_out:
             pickle.dump(X_train, f_out)
   
     def run_fer(self, faces, fer_model, extract=False):
