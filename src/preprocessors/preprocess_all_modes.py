@@ -79,8 +79,7 @@ def preprocess(video_folder, local_base_path, label_file=None):
         output_file=f"{local_base_path}-audio.zip"
     )
 
-    #preprocessors_list = [fer_preprocessor]
-    preprocessors_list = [video_preprocessor, face_preprocessor, pose_preprocessor, audio_preprocessor]
+    preprocessors_list = [video_preprocessor, face_preprocessor, fer_preprocessor, pose_preprocessor, audio_preprocessor]
 
     for preprocessor in preprocessors_list:
         preprocessor.preprocess()
