@@ -27,7 +27,7 @@ class FerPreprocessor:
             f"FER Preprocessor created with faces_folder = {faces_folder}, output_folder = {output_folder}, output_file = {output_file}")
 
     def load_labels(self):
-        Y_all = np.loadtxt("Train_labels.txt", dtype='str', delimiter=' ')[1:]
+        Y_all = np.loadtxt(self.label_path, dtype='str', delimiter=' ')[1:]
         for r in range(Y_all.shape[0]):
             Y_all[r][1] = int(Y_all[r][1]) - 1
 
