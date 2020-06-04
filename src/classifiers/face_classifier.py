@@ -3,7 +3,7 @@ from sklearn.preprocessing import Normalizer
 import os, cv2
 import numpy as np
 
-class FerClassifier:
+class FaceClassifier:
   """
   Classifies sentiment based on facial expressions extracted from videos
   """
@@ -22,7 +22,7 @@ class FerClassifier:
         self.is_test = is_test
         self.model_location = model_location
         self.batch_size = batch_size
-        print(f"FerClassifier created with face_folder = {face_folder} , is_test = {is_test} , model_location = {model_location}")
+        print(f"FacesClassifier created with face_folder = {face_folder} , is_test = {is_test} , model_location = {model_location}")
         if "https://" in self.model_location or "http://" in self.model_location:
             downloaded_model_path = tf.keras.utils.get_file("audio-classifier", self.model_location)
             self.model = load_model(downloaded_model_path)
@@ -92,7 +92,7 @@ class FerClassifier:
       es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=300)
       mc = ModelCheckpoint(save_path, monitor='val_accuracy', mode='max', verbose=1, save_best_only=True)
 
-      _, history = self.model.fit(self.X_train, self.y_train, epochs=epochs, 
+      _, history = self.model.fit(self.X_train, self.y_train, epochs=epochs,
       batch_size=self.batch_size, validation_data=(self.X_val, self.Y_val))
 
       return self.model, history
