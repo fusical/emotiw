@@ -42,38 +42,18 @@ class FaceClassifier:
       print("load data")
       self.X = np.load(os.path.join(self.face_folder, "faces-fer-X.npy"))
       if os.path.exists(os.path.join(self.face_folder, "faces-fer-Y.npy")):
-          self.Y = np.load(os.path.join(self.face_folder, "faces-fer-Y.npy")).astype(int)[:50, 1] - 1
+          self.Y = np.load(os.path.join(self.face_folder, "faces-fer-Y.npy")).astype(int)[:, 1]
           self.Y = tf.keras.utils.to_categorical(self.Y, num_classes=3)
 
   def predict(self, layer=None):
-      """
-      Performs sentiment classification prediction on preprocessed audio files
-      @param layer: If None, performs normal sentiment classification.
-                    If not None, returns the values from the intermediate layers.
-      return:
-          - The model prediction result
-          - The video file names for each of the rows returned in model.predict
-            (without the .mp4 suffix)
-      """
-      folder = unzip_folder(self.face_folder, "audio_tmp")
-      X = np.load(os.path.join(folder, 'audio-pickle-all-X-openl3.pkl'), allow_pickle=True)
-
-
       if layer is not None:
           print(f"Customizing model by returning layer {layer}")
           model = tf.keras.models.Model(self.model.input, self.model.get_layer(layer).output)
       else:
           model = self.model
 
-      normalizer = Normalizer()
-      for i in range(0, X.shape[0]):
-          X[i] = normalizer.fit_transform(X[i])
-
-      # The original pre-processing created the X array using the sorted order of the video files
-      audio_pickles = sorted(next(os.walk(os.path.join(self.face_folder, "audio-pickle")))[2])
-      samples = map(lambda x: x.split(".mp4")[0], audio_pickles)
-
-      return model.predict(X, batch_size=self.batch_size), list(samples)
+      samples = map(lambda x: str(x) + ".mp4", self.Y[:, 0])
+      return model.predict(self.X, batch_size=self.batch_size), list(samples)
 
   def summary(self):
       self.model.summary()
@@ -107,7 +87,7 @@ class FaceClassifier:
         1. Trained model -- saves the model as an .h5 file to the specified path
       """
       self.X_val = np.load(os.path.join(faces_val_folder, "faces-fer-X.npy"))
-      self.Y_val = np.load(os.path.join(faces_val_folder, "faces-fer-Y.npy")).astype(int)[:50, 1] - 1
+      self.Y_val = np.load(os.path.join(faces_val_folder, "faces-fer-Y.npy")).astype(int)[:, 1]
       self.Y_val = tf.keras.utils.to_categorical(self.Y_val, num_classes=3)
 
       es = tf.keras.callbacks.EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=300)
@@ -120,6 +100,11 @@ class FaceClassifier:
                                 validation_data=(self.X_val, self.Y_val))
 
       return self.model, history
+
+
+
+
+
 
 
 
