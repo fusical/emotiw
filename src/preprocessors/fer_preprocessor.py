@@ -13,10 +13,11 @@ class FerPreprocessor:
     """
     Run FER on all faces.
     """
-    def __init__(self, faces_folder, output_folder, model_path, output_file=None,
-                 max_frames=12, max_workers=32):
+    def __init__(self, faces_folder, label_path, output_folder, model_path,
+                 output_file=None, max_frames=12, max_workers=32):
 
         self.faces_folder = faces_folder
+        self.label_path = label_path
         self.max_frames = max_frames
         self.output_folder = output_folder
         self.output_file = output_file
@@ -24,6 +25,13 @@ class FerPreprocessor:
         self.model_path = model_path
         print(
             f"FER Preprocessor created with faces_folder = {faces_folder}, output_folder = {output_folder}, output_file = {output_file}")
+
+    def load_labels(self):
+        Y_all = np.loadtxt("Train_labels.txt", dtype='str', delimiter=' ')[1:]
+        for r in range(Y_all.shape[0]):
+            Y_all[r][1] = int(Y_all[r][1]) - 1
+
+        return Y_all
 
     def preprocess(self):
         tmp_input_folder = ""
@@ -57,7 +65,9 @@ class FerPreprocessor:
             X_all[i] = future.result()
         
         Path(f"{self.output_folder}/").mkdir(parents=True, exist_ok=True)
-        np.save(f"{self.output_folder}/faces-fer.npy", X_all)
+        np.save(f"{self.output_folder}/faces-fer-X.npy", X_all)
+        Y_all = self.load_labels()
+        np.save(f"{self.output_folder}/faces-fer-Y.npy", Y_all)
         print("***** Completed *****")
 
         if self.output_file is not None:

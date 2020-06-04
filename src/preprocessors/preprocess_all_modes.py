@@ -60,6 +60,7 @@ def preprocess(video_folder, local_base_path, label_file=None):
 
     fer_preprocessor = FerPreprocessor(
         faces_folder=f"{local_base_path}-faces",
+        label_path=label_file,
         output_folder=f"{local_base_path}-fer",
         output_file=f"{local_base_path}-fer.zip",
         model_path="fer2013_mini_XCEPTION.119-0.65.hdf5"
