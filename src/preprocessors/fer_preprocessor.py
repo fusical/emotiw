@@ -48,6 +48,7 @@ class FerPreprocessor:
             print("Skipping unzipping files as input is a folder")
 
         fer_model = load_model(self.model_path)
+        Y_all = self.load_labels()
 
         # Process each face
         videos = next(os.walk(tmp_input_folder))[2]
@@ -55,18 +56,20 @@ class FerPreprocessor:
         futures = []
         with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             for i in range(len(videos)):
-                future = executor.submit(self.process_video, fer_model, tmp_input_folder, \
-                                         videos[i], i, len(videos))
-                futures.append(future)
+                X = executor.submit(self.process_video, fer_model, tmp_input_folder, \
+                                    videos[i], i, len(videos))
+                Y = Y_all[np.where(Y_all[:,0] == videos[i][:-8])] # ('2_1','1')
+                futures.append((X,Y))
 
         print("***** Submitted all tasks *****")
         X_all = np.empty((len(videos),self.max_frames,22))
-        for future in futures:
-            X_all[i] = future.result()
-        
+        Y_all = []
+        for i, future in enumerate(futures):
+            X_all[i] = future[0].result()
+            Y_all.append(future[1][0])
+
         Path(f"{self.output_folder}/").mkdir(parents=True, exist_ok=True)
         np.save(f"{self.output_folder}/faces-fer-X.npy", X_all)
-        Y_all = self.load_labels()
         np.save(f"{self.output_folder}/faces-fer-Y.npy", Y_all)
         print("***** Completed *****")
 
@@ -93,9 +96,9 @@ class FerPreprocessor:
         if extract:
             fer_model = Model(inputs=fer_model.input, outputs=fer_model.layers[-3].output)
             _, H, W, C = fer_model.output_shape
-            X = np.empty((num_videos, max_frames, H*W*C*3 + 1))
+            X = np.zeros((num_videos, max_frames, H*W*C*3 + 1))
         else:
-            X = np.empty((self.max_frames, 22))
+            X = np.zeros((self.max_frames, 22))
 
         pkl_path = join(tmp_input_folder, pkl_name)
         with open(pkl_path, "rb") as f_in:
