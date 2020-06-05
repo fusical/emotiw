@@ -31,7 +31,7 @@ class FaceClassifier:
       print(f"FacesClassifier created with face_folder = {face_folder} , is_test = {is_test} , model_location = {model_location}")
       if self.model_location is not None:
           if "https://" in self.model_location or "http://" in self.model_location:
-              downloaded_model_path = tf.keras.utils.get_file("audio-classifier", self.model_location)
+              downloaded_model_path = tf.keras.utils.get_file("face-classifier", self.model_location)
               self.model = load_model(downloaded_model_path)
           else:
               self.model = load_model(self.model_location)
@@ -51,8 +51,9 @@ class FaceClassifier:
           model = tf.keras.models.Model(self.model.input, self.model.get_layer(layer).output)
       else:
           model = self.model
-
-      samples = map(lambda x: str(x) + ".mp4", self.Y[:, 0])
+      path = os.path.join(self.face_folder, "faces-fer-Y.npy")
+      y = np.load(path, allow_pickle=True)
+      samples = map(lambda x: str(x) + ".mp4", y[:, 0])
       return model.predict(self.X, batch_size=self.batch_size), list(samples)
 
   def summary(self):
