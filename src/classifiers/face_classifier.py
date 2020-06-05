@@ -3,6 +3,7 @@ from sklearn.preprocessing import Normalizer
 import os, cv2
 import numpy as np
 import tensorflow as tf
+from tensorflow.keras import layers
 from pathlib import Path
 
 
@@ -66,8 +67,14 @@ class FaceClassifier:
   # Ouputs (3): frame sentiment
   def init_model(self):
       def create_model(inputs):
-          x = tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(32, return_sequences=False, kernel_regularizer=tf.keras.regularizers.l2()))(inputs)
-          x = tf.keras.layers.Dense(3, activation='softmax', kernel_regularizer=tf.keras.regularizers.l2())(x)
+          x = inputs
+          x = layers.BatchNormalization()(x)
+          x = layers.Conv1D(16, 3, activation='relu')(x)
+          x = layers.Flatten()(x)
+          #x = layers.Bidirectional(layers.LSTM(32, return_sequences=False, kernel_regularizer=tf.keras.regularizers.l2()))(inputs)
+          x = layers.Dense(16, activation='relu', kernel_regularizer=tf.keras.regularizers.l2())(x)
+          #x = layers.Dense(32, activation='relu', kernel_regularizer=tf.keras.regularizers.l2())(x)
+          x = layers.Dense(3, activation='softmax', kernel_regularizer=tf.keras.regularizers.l2())(x)
 
           # optimizer = tf.keras.optimizers.SGD(learning_rate=1e-4)
 
