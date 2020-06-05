@@ -53,7 +53,7 @@ class FaceClassifier:
           model = self.model
       path = os.path.join(self.face_folder, "faces-fer-Y.npy")
       y = np.load(path, allow_pickle=True)
-      samples = map(lambda x: str(x) + ".mp4", y[:, 0])
+      samples = map(lambda x: str(x), y[:, 0])
       return model.predict(self.X, batch_size=self.batch_size), list(samples)
 
   def summary(self):
@@ -101,6 +101,7 @@ class FaceClassifier:
                                 validation_data=(self.X_val, self.Y_val))
 
       return self.model, history
+
 
 
 
