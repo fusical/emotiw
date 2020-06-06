@@ -105,14 +105,14 @@ class FerPreprocessor:
           frames = pickle.load(f_in)
           for frame_i in range(min(len(frames), self.max_frames)):
               faces = frames[frame_i]
-              if len(faces) != 0:
-                  fer_scores = self.run_fer(faces, fer_model, extract) # (N,7)
-                  max_face_scores = np.amax(fer_scores, axis=0).flatten() # (1,7)
-                  min_face_scores = np.amin(fer_scores, axis=0).flatten() # (1,7)
-                  mean_face_scores = np.mean(fer_scores, axis=0).flatten() # (1,7)
-                  num_faces = np.array([len(faces)])
-                  X[frame_i, :] = np.concatenate((max_face_scores, min_face_scores, \
-                                                  mean_face_scores, num_faces))
+              fer_scores = self.run_fer(faces, fer_model, extract) # (N,7)
+              if fer_scores.shape[0] != 0:
+                max_face_scores = np.amax(fer_scores, axis=0).flatten() # (1,7)
+                min_face_scores = np.amin(fer_scores, axis=0).flatten() # (1,7)
+                mean_face_scores = np.mean(fer_scores, axis=0).flatten() # (1,7)
+                num_faces = np.array([len(faces)])
+                X[frame_i, :] = np.concatenate((max_face_scores, min_face_scores, \
+                                                mean_face_scores, num_faces))
 
         return X
   
@@ -120,11 +120,14 @@ class FerPreprocessor:
       N = len(faces)
       if extract:
         _, H, W, C = fer_model.output_shape
-        fer_scores = np.empty((N,H,W,C))
+        fer_scores = np.zeros((N,H,W,C))
       else:
-        fer_scores = np.empty((N,7))
+        fer_scores = np.zeros((N,7))
 
       for i in range(N):
+        # faces below 40x40 don't do well on FER
+        if (faces[i].shape[0]*faces[i].shape[0] < 40*40):
+          continue
         X = cv2.resize(faces[i], (48,48))
         X = cv2.cvtColor(X, cv2.COLOR_BGR2GRAY)
         X = cv2.normalize(X,0,255)
@@ -134,6 +137,7 @@ class FerPreprocessor:
         #rloc = make_relative_loc(f"{vid_name}.mp4",framei*10,facei)
         #X_train[0,framei,facei,:7] = y_pred_prob
         #X_train[0,framei,facei,7:] = rloc
-
-      return fer_scores
+      
+      # drop skipped faces
+      return fer_scores[~np.all(fer_scores == 0, axis=1)]
   
