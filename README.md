@@ -6,7 +6,8 @@ Despite cultural diversity, emotions are universal. We will undertake the EmotiW
 ## Dataset
 We worked with the EmotiW 2020 dataset.
 
-![Sample image](images/example-classes.jpg)
+<div style="vertical-align:middle"><img src="images/example-classes.jpg" alt="Sample image" width="600px" text-align="center">
+</div>
 
 ## Getting Started
 
@@ -18,7 +19,7 @@ The code is organized as follows:
 - notebooks/ - notebooks for training and prediction
 
 ### Try it out
-Run this [notebook]() to see how our model works on the dataset
+Run this [notebook](notebooks/FINAL-ensemble_fc_predictions.ipynb) to see how our model works on the dataset
 
 ## Results
 
@@ -45,7 +46,7 @@ We ensembled models from four modalities: overall scene, pose, audio, and facial
 </div>
 
 ## The Team
-Boyang Tom Jin, Leila Abdelrahman, Cong Kevin Chen, Amil Khanzada<br>
+[Boyang Tom Jin](https://www.linkedin.com/in/tomjinvancouver/), [Leila Abdelrahman](http://leilaabdel.com/), [Cong Kevin Chen](https://www.linkedin.com/in/cong-kevin-chen-11544186/), [Amil Khanzada](https://www.linkedin.com/in/amilkhanzada)<br>
 [CS231n - Stanford University](http://cs231n.stanford.edu/)
 
 ## Citing Our Work
