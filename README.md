@@ -27,6 +27,9 @@ The code is organized as follows:
 ### Try it out
 Run this [notebook](notebooks/FINAL-ensemble_fc_predictions.ipynb) to see how our model works on the dataset
 
+#### Model Emporium 
+We provide many of the models we trained [here](model-emporium.md) 
+
 ## Results
 
 
