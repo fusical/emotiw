@@ -56,5 +56,11 @@ We provide many of the models we trained [here](model-emporium.md)
 
 ## Citing Our Work
 ```
-@{}
+@misc{2020fusical,
+  author =       {Boyang Tom Jin and Leila Abdelrahman and Cong Kevin Chen and
+                  Amil Khanzada},
+  title =        {Fusical},
+  howpublished = {\url{https://github.com/kevincong95/cs231n-emotiw}},
+  year =         {2020}
+}
 ```
