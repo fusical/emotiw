@@ -6,7 +6,7 @@ Despite cultural diversity, emotions are universal. We will undertake the EmotiW
 ## Dataset
 We worked with the EmotiW 2020 dataset.
 
-![Sample image](images/emotiw-sample.jpg)
+![Sample image](images/example-classes.jpg)
 
 ## Getting Started
 
