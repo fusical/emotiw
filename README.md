@@ -9,6 +9,12 @@ We worked with the EmotiW 2020 dataset.
 <div style="vertical-align:middle"><img src="images/example-classes.jpg" alt="Sample image" width="600px" text-align="center">
 </div>
 
+### Architecture
+We ensembled models from four modalities: overall scene, pose, audio, and facial.
+
+<div style="text-align:center"><img src="images/ensemble-architecture.jpg" alt="Ensemble Architecture" width="550px" align="center">
+</div>
+
 ## Getting Started
 
 To start, please check out our [paper](report.pdf), [presentation](https://drive.google.com/file/d/15s1jfWtt37JV1BQu1e2gvfaTqEdFsgOK/view?usp=sharing), and [slide deck](https://docs.google.com/presentation/d/1rHWnZwHUW6CVbl7qutWYIRriGZnI6RD6-AfmcoQ0yJc/edit).
@@ -39,11 +45,7 @@ Run this [notebook](notebooks/FINAL-ensemble_fc_predictions.ipynb) to see how ou
 | Face | 0.4 |0.348 |
 | **FC Ensemble** | **0.636** | **0.626** |
 
-### Architecture
-We ensembled models from four modalities: overall scene, pose, audio, and facial.
 
-<div style="text-align:center"><img src="images/ensemble-architecture.jpg" alt="Ensemble Architecture" width="600px" align="center">
-</div>
 
 ## The Team
 [Boyang Tom Jin](https://www.linkedin.com/in/tomjinvancouver/), [Leila Abdelrahman](http://leilaabdel.com/), [Cong Kevin Chen](https://www.linkedin.com/in/cong-kevin-chen-11544186/), [Amil Khanzada](https://www.linkedin.com/in/amilkhanzada)<br>
