@@ -21,13 +21,28 @@ The code is organized as follows:
 Run this [notebook]() to see how our model works on the dataset
 
 ## Results
-Confusion matrix / table
-![Independent confusion matrix](images/conf-matrix-indep.png)
+
+
+### Confusion matrix 
+
+<div style="text-align:center"><img src="images/conf-matrix-indep.png" alt="Independent confusion matrix" width="600px" align="center">
+</div>
+
+### Table
+
+| Modality  | Accuracy | F1-Score
+| ------------- | ------------- | ------------- |
+| Scene  | 0.546  | 0.541 |
+| Pose  | 0.486  | 0.489 |
+|Audio|0.577|0.577|
+| Face | 0.4 |0.348 |
+| **FC Ensemble** | **0.636** | **0.626** |
 
 ### Architecture
 We ensembled models from four modalities: overall scene, pose, audio, and facial.
 
-![Ensemble Architecture](images/ensemble-architecture.jpg)
+<div style="text-align:center"><img src="images/ensemble-architecture.jpg" alt="Ensemble Architecture" width="600px" align="center">
+</div>
 
 ## The Team
 Boyang Tom Jin, Leila Abdelrahman, Cong Kevin Chen, Amil Khanzada<br>
