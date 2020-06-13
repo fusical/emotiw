@@ -14,5 +14,5 @@ These models are provided as .h5 files that you can download and run in either l
 ## Ensemble Model Files
 | Model Name | Links |
 | ------------- | ------------- |
-| FC Model  | [Click me!]()  |
+| FC Model  | [Click me!](https://drive.google.com/file/d/1-nfgS6IWuZx1oeL0duGRu6tg-kgs6yT0/view?usp=sharing)  |
 | VAE  | [Clicke me!](https://drive.google.com/file/d/1--R4lPa7SnYh62E0uz6H792ed2cd9ikB/view?usp=sharing)  |
