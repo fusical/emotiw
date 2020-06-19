@@ -57,14 +57,13 @@ from itertools import repeat
 num_cores = cpu_count()
 
 def process_row(processor, row):
-    return processor.process_example((row[1][LABEL_COL], row[1][TEXT_COL]))
+    # Put a dummy value for now because we don't use label when predicting
+    return processor.process_example((0, row[1]["text"]))
 
 def create_dataloader(df: pd.DataFrame,
                       processor: TextProcessor,
                       batch_size: int = 32,
-                      shuffle: bool = True,
-                      text_col: str = "text",
-                      label_col: str = "label"):
+                      shuffle: bool = True):
     "Process rows in `df` with `processor` and return a  DataLoader"
 
     with ProcessPoolExecutor(max_workers=num_cores) as executor:
@@ -169,6 +168,18 @@ class TransformerWithClfHead(nn.Module):
             return clf_logits, loss
         return clf_logits
 
+from collections import namedtuple
+FineTuningConfig = namedtuple('FineTuningConfig',
+      field_names="num_classes, dropout, init_range, batch_size, lr, max_norm,"
+                  "n_warmup, valid_pct, gradient_acc_steps, device, log_dir")
+
+import torch.nn as nn
+class Identity(nn.Module):
+    def __init__(self):
+        super(Identity, self).__init__()
+        
+    def forward(self, x):
+        return x
 
 class ImageCaptioningClassifier:
     """
@@ -209,7 +220,7 @@ class ImageCaptioningClassifier:
             train_captions_obj = pickle.load(f)
 
         train_captions = []
-        for tc in train_captions_obj[caption_pkl_key_prefix + "captions"]:
+        for tc in train_captions_obj[self.caption_pkl_key_prefix + "captions"]:
             # For each video
             sentences = []
             for t in tc:
@@ -227,7 +238,7 @@ class ImageCaptioningClassifier:
                 break
             train_captions.append("".join(sentences))
 
-        df_train = pd.DataFrame(list(zip(train_captions, train_captions_obj[caption_pkl_key_prefix + "videos"])), columns =['text', 'vid_name']) 
+        df_train = pd.DataFrame(list(zip(train_captions, train_captions_obj[self.caption_pkl_key_prefix + "videos"])), columns =['text', 'vid_name']) 
         train_dl = create_dataloader(df_train, processor, 
                                     batch_size=32, 
                                     shuffle=False)
@@ -247,12 +258,17 @@ class ImageCaptioningClassifier:
                     pred_labels.extend(logits.argmax(axis=1).tolist())
             return np.array(pred_labels), df_train["vid_name"].tolist()
         else:
+            ### Remove last classifier head
+
+            self.model.classification_head = Identity()
+
             pred_labels = torch.zeros((len(df_train), 410))
+
             i = 0
             for batch in train_dl:
                 self.model.eval()
                 with torch.no_grad():
-                    batch, labels = (t.to(finetuning_config.device) for t in batch)
+                    batch, labels = (t.to(self.metadata["config_ft"].device) for t in batch)
                     inputs = batch.transpose(0, 1).contiguous()
                     logits = self.model(inputs,
                                     clf_tokens_mask = (inputs == tokenizer.vocab[processor.CLS]),
