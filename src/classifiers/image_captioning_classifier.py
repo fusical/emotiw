@@ -147,7 +147,8 @@ class TransformerWithClfHead(nn.Module):
                                        config.num_max_positions, config.num_heads, config.num_layers,
                                        fine_tuning_config.dropout, causal=not config.mlm)
         
-        self.classification_head = nn.Linear(config.embed_dim, fine_tuning_config.num_classes)
+        self.pre_classification_head = nn.Linear(config.embed_dim, 16)
+        self.classification_head = nn.Linear(16, fine_tuning_config.num_classes)
         self.apply(self.init_weights)
 
     def init_weights(self, module):
@@ -160,7 +161,8 @@ class TransformerWithClfHead(nn.Module):
         hidden_states = self.transformer(x, padding_mask)
 
         clf_tokens_states = (hidden_states * clf_tokens_mask.unsqueeze(-1).float()).sum(dim=0)
-        clf_logits = self.classification_head(clf_tokens_states)
+        clf_logits = self.pre_classification_head(clf_tokens_states)
+        clf_logits = self.classification_head(clf_logits)
 
         if clf_labels is not None:
             loss_fct = nn.CrossEntropyLoss(ignore_index=-1)
@@ -255,14 +257,14 @@ class ImageCaptioningClassifier:
                     logits = self.model(inputs,
                                     clf_tokens_mask = (inputs == tokenizer.vocab[processor.CLS]),
                                     padding_mask = (batch == tokenizer.vocab[processor.PAD]))
-                    pred_labels.extend(logits.argmax(axis=1).tolist())
+                    pred_labels.extend(logits.tolist())
             return np.array(pred_labels), df_train["vid_name"].tolist()
         else:
             ### Remove last classifier head
 
             self.model.classification_head = Identity()
 
-            pred_labels = torch.zeros((len(df_train), 410))
+            pred_labels = torch.zeros((len(df_train), 16))
 
             i = 0
             for batch in train_dl:

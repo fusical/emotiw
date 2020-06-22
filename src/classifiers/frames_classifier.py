@@ -9,12 +9,13 @@ class FramesClassifier:
     Classifies sentiment based on frames extracted from video clips
     """
 
-    def __init__(self, frames_folder, model_location=None, is_test=None, frames_to_use=12, batch_size=16):
+    def __init__(self, frames_folder, location_prefix="resnet", model_location=None, is_test=None, frames_to_use=12, batch_size=16):
         """
         @param frames_folder  The folder where the list of frames are stored. If
                               `is_zip` is set to True, this should be a single zip
                               file containing the frames. Paths can either by a local
                               folder or a GDrive mounted path.
+        @param local_prefix   Unique prefix to distinguish from other frames classifiers
         @param model_location The pre-trained model to perform predictions
         @param is_test        If set to True, we assume that `frames_folder` contains a flat
                               list of videos. If False, we assume that `frames_folder` first
@@ -30,7 +31,7 @@ class FramesClassifier:
         print(f"FramesClassifier created with frames_folder = {frames_folder} , is_test = {is_test} , model_location = {model_location}")
 
         if "https://" in self.model_location or "http://" in self.model_location:
-            downloaded_model_path = tf.keras.utils.get_file("frame-classifier", self.model_location)
+            downloaded_model_path = tf.keras.utils.get_file(location_prefix + "frame-classifier", self.model_location)
             self.model = tf.keras.models.load_model(downloaded_model_path)
         else:
             self.model = tf.keras.models.load_model(self.model_location)
