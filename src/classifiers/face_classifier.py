@@ -43,7 +43,7 @@ class FaceClassifier:
       print("load data")
       self.X = np.load(os.path.join(self.face_folder, "faces-fer-X.npy"))
       if os.path.exists(os.path.join(self.face_folder, "faces-fer-Y.npy")):
-          self.Y = np.load(os.path.join(self.face_folder, "faces-fer-Y.npy")).astype(int)[:, 1]
+          self.Y = np.load(os.path.join(self.face_folder, "faces-fer-Y.npy"))[:, 1].astype(int)
           self.Y = tf.keras.utils.to_categorical(self.Y, num_classes=3)
 
   def predict(self, layer=None):
@@ -108,12 +108,3 @@ class FaceClassifier:
                                 validation_data=(self.X_val, self.Y_val))
 
       return self.model, history
-
-
-
-
-
-
-
-
-
