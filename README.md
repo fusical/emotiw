@@ -17,7 +17,7 @@ We ensembled models from four modalities: overall scene, pose, audio, and facial
 
 ## Getting Started
 
-To start, please check out our [paper](report.pdf), [presentation](https://drive.google.com/file/d/15s1jfWtt37JV1BQu1e2gvfaTqEdFsgOK/view?usp=sharing), and [slide deck](https://docs.google.com/presentation/d/1rHWnZwHUW6CVbl7qutWYIRriGZnI6RD6-AfmcoQ0yJc/edit).
+To start, please check out our [paper](report.pdf), [presentation](https://drive.google.com/file/d/1catb9ng8glqUBi6AwJTKjNTnnoZjSwVq/view), and [slide deck](https://docs.google.com/presentation/d/1rHWnZwHUW6CVbl7qutWYIRriGZnI6RD6-AfmcoQ0yJc/edit).
 
 ### Code Layout
 The code is organized as follows:
