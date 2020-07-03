@@ -1,4 +1,4 @@
-# CS231n - Multimodal Sentiment Classification on EmotiW 2020
+# Fusical: Multimodal Fusion for Video Sentiment
 
 ## Introduction
 Despite cultural diversity, emotions are universal. We will undertake the EmotiW challenge, doing group-level sentiment recognition on videos from across the globe. Given short clips, the goal is to predict whether the video sentiment is positive, neutral, or negative. This problem is interesting because audio-visual sentiment analysis has implications in psychology and mental health.
@@ -32,10 +32,13 @@ We provide many of the models we trained [here](model-emporium.md)
 
 ## Results
 
+### Final Ensemble
+<div style="text-align:center"><img src="images/final_fc_ensemble_conf.jpg" alt="Best Submission Confusion Matrix" width="400px" align="center">
+</div>
 
-### Confusion matrix 
+### Ablation Study
 
-<div style="text-align:center"><img src="images/conf-matrix-indep.png" alt="Independent confusion matrix" width="600px" align="center">
+<div style="text-align:center"><img src="images/ablation_conf.jpg" alt="Ablation Confusion Matrices" width="600px" align="center">
 </div>
 
 ### Table
@@ -44,11 +47,15 @@ We provide many of the models we trained [here](model-emporium.md)
 | ------------- | ------------- | ------------- |
 | Scene  | 0.546  | 0.541 |
 | Pose  | 0.486  | 0.489 |
-|Audio|0.577|0.577|
+| Audio|0.577|0.577|
 | Face | 0.4 |0.348 |
-| **FC Ensemble** | **0.636** | **0.626** |
+| Image Captioning | | .506 |
+| **FC Ensemble** | **0.639** | **0.638** |
 
 
+### "Saliency" Map
+<div style="text-align:center"><img src="images/ensemble-saliency-2.jpg" alt="Ablation Confusion Matrices" width="400px" align="center">
+</div>
 
 ## The Team
 [Boyang Tom Jin](https://www.linkedin.com/in/tomjinvancouver/), [Leila Abdelrahman](http://leilaabdel.com/), [Cong Kevin Chen](https://www.linkedin.com/in/cong-kevin-chen-11544186/), [Amil Khanzada](https://www.linkedin.com/in/amilkhanzada)<br>
