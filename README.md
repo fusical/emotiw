@@ -25,10 +25,10 @@ The code is organized as follows:
 - notebooks/ - notebooks for training and prediction
 
 ### Try it out
-Run this [notebook](notebooks/FINAL-ensemble_fc_predictions_v2-with-laugh-with-TEST.ipynb) to see how our model works on the dataset
+Run this [notebook](notebooks/FINAL-ensemble_fc_predictions_v2-with-laugh-with-TEST.ipynb) to see how our model works on the dataset.
 
 ### Model Emporium 
-We provide many of the models we trained [here](model-emporium.md) 
+We provide many of the models we trained [here](model-emporium.md).
 
 ## Results
 
