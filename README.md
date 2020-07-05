@@ -1,7 +1,7 @@
 # Fusical: Multimodal Fusion for Video Sentiment
 
 ## Introduction
-Despite cultural diversity, emotions are universal. We will undertake the EmotiW challenge, doing group-level sentiment recognition on videos from across the globe. Given short clips, the goal is to predict whether the video sentiment is positive, neutral, or negative. This problem is interesting because audio-visual sentiment analysis has implications in psychology and mental health.
+Despite cultural diversity, emotions are universal. We will undertake the [EmotiW 2020 challenge](https://sites.google.com/view/emotiw2020), doing group-level sentiment recognition on videos from across the globe. Given short clips, the goal is to predict whether the video sentiment is positive, neutral, or negative. This problem is interesting because audio-visual sentiment analysis has implications in psychology and mental health.
 
 ## Dataset
 We worked with the EmotiW 2020 dataset.
@@ -41,7 +41,9 @@ We provide many of the models we trained [here](model-emporium.md).
 <div style="text-align:center"><img src="images/ablation_conf.jpg" alt="Ablation Confusion Matrices" width="600px" align="center">
 </div>
 
-### Table
+### Table - Individual Modalities
+
+Results as reported based on the EmotiW 2020 validation dataset.
 
 | Modality  | Accuracy | F1-Score
 | ------------- | ------------- | ------------- |
@@ -49,9 +51,13 @@ We provide many of the models we trained [here](model-emporium.md).
 | Pose  | 0.486  | 0.489 |
 | Audio|0.577|0.577|
 | Face | 0.4 |0.348 |
-| Image Captioning | | .506 |
-| **FC Ensemble** | **0.639** | **0.638** |
+| Image Captioning | 0.505 | .506 |
 
+### Table - Final Ensemble
+| Dataset  | Accuracy
+| ------------- | -------------
+| Validation | **0.640** |
+| Test | **0.639** |
 
 ### "Saliency" Map
 <div style="text-align:center"><img src="images/ensemble-saliency-2.jpg" alt="Ablation Confusion Matrices" width="400px" align="center">
