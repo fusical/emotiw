@@ -51,7 +51,7 @@ Results as reported based on the EmotiW 2020 validation dataset.
 | Pose  | 0.486  | 0.489 |
 | Audio|0.577|0.577|
 | Face | 0.4 |0.348 |
-| Image Captioning | 0.505 | .506 |
+| Image Captioning | 0.505 | 0.506 |
 
 ### Table - Final Ensemble
 | Dataset  | Accuracy
