@@ -1,11 +1,9 @@
 # Fusical: Multimodal Fusion for Video Sentiment
 
-***Update: Fusical has been accepted to ICMI 2020!!!*** 
-
-Stay tuned!
-
 ## Introduction
 Despite cultural diversity, emotions are universal. We will undertake the [EmotiW 2020 challenge](https://sites.google.com/view/emotiw2020), doing group-level sentiment recognition on videos from across the globe. Given short clips, the goal is to predict whether the video sentiment is positive, neutral, or negative. This problem is interesting because audio-visual sentiment analysis has implications in psychology and mental health.
+
+Our paper was accepted at the [22nd ACM International Conference on Multimodal Interaction](http://icmi.acm.org/2020/): https://dl.acm.org/doi/10.1145/3382507.3417966
 
 ## Dataset
 We worked with the EmotiW 2020 dataset.
